@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, {useState} from 'react';
 import Button from '../components/Button';
 
@@ -11,19 +12,44 @@ const Login = () => {
     setLoginInfo({...loginInfo, username: e.target.value});
   };
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('pwd',e.target.value);
+    console.log('pwd', e.target.value);
     setLoginInfo({...loginInfo, username: e.target.value});
   };
-  const loginUser=(e:React.FormEvent<HTMLFormElement>)=>{
-    e.preventDefault()
-    console.log('You are now logged in.');
-    
-}
+  const loginUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // console.log('You are now logged in.');
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/accounts/login/',
+        loginInfo,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log(response);
+
+      if (response.status === 200) {
+        console.log('You are now logged in.');
+      } else {
+        console.log('Login failed.');
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  };
+
   return (
     <div>
       <div className='flex items-center justify-center p-12'>
         <div className='mx-auto w-full max-w-[550px]'>
-          <form onSubmit={loginUser} action='https://formbold.com/s/FORM_ID' method='POST'>
+          <form
+            onSubmit={loginUser}
+            action='https://formbold.com/s/FORM_ID'
+            method='POST'
+          >
             <div className='mb-5'>
               <label
                 htmlFor='name'
